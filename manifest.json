@@ -1,16 +1,17 @@
 {
-  "name": "Simulateur &amp; Guide Fiscal &amp; Social - Maroc",
+  "name": "Simulateur & Guide Fiscal & Social - Maroc",
   "short_name": "FiscalMaroc",
   "description": "Outil complet de simulation et guide technique de la fiscalité et du social au Maroc.",
-  "start_url": "index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0b192c",
   "theme_color": "#ffcc00",
   "icons": [
     {
-      "src": "icon.png",
+      "src": "./icon.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
