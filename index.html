@@ -12,7 +12,7 @@
             --card-bg: #1e3e62;
             --accent-yellow: #ffcc00;
             --text-light: #ffffff;
-            --text-muted: #94a3b8;
+            --text-muted: #cbd5e1;
             --border-color: #314e6b;
         }
 
@@ -31,7 +31,7 @@
         }
 
         .container {
-            max-width: 650px;
+            max-width: 700px;
             margin: 0 auto;
         }
 
@@ -124,7 +124,7 @@
 
         h2 {
             color: var(--accent-yellow);
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             margin-bottom: 15px;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 8px;
@@ -132,20 +132,23 @@
 
         h3 {
             color: var(--accent-yellow);
-            font-size: 1rem;
-            margin-top: 15px;
+            font-size: 1.05rem;
+            margin-top: 20px;
             margin-bottom: 8px;
+            border-left: 3px solid var(--accent-yellow);
+            padding-left: 8px;
         }
 
         p, li {
             font-size: 0.9rem;
             color: var(--text-muted);
-            line-height: 1.5;
-            margin-bottom: 10px;
+            line-height: 1.6;
+            margin-bottom: 8px;
         }
 
         ul {
             padding-left: 20px;
+            margin-bottom: 10px;
         }
 
         .form-group {
@@ -224,7 +227,7 @@
 <div class="container">
     <header>
         <h1>Fiscalité & Social Maroc</h1>
-        <p class="subtitle">Impôts, Taxes & Cotisations Sociales (CNSS, AMO, CNOPS)</p>
+        <p class="subtitle">Simulateur & Encyclopédie Technique DGI</p>
     </header>
 
     <!-- Navigation Principale -->
@@ -268,7 +271,7 @@
             </div>
         </div>
 
-        <!-- ONGLET COTISATIONS SOCIALES (CNSS, AMO, CNOPS) -->
+        <!-- ONGLET COTISATIONS SOCIALES -->
         <div id="socialTab" class="tab-content">
             <div class="card">
                 <h2>Simulateur des Cotisations Sociales (CNSS, AMO & CNOPS)</h2>
@@ -286,7 +289,6 @@
                 <button class="calc-btn" onclick="calculerSocial()">Calculer les Charges Sociales</button>
 
                 <div class="result-box" id="socialResult" style="display:none;">
-                    <!-- Bloc Privé -->
                     <div id="blocPrive">
                         <div class="result-item"><span>CNSS Salarial (4.48% plafonné) :</span> <span id="resCnssSal">0 DH</span></div>
                         <div class="result-item"><span>AMO Salarial Privé (2.26%) :</span> <span id="resAmoSal">0 DH</span></div>
@@ -294,7 +296,6 @@
                         <div class="result-item"><span>CNSS Patronal (~21.05%) :</span> <span id="resCnssPat">0 DH</span></div>
                         <div class="result-item"><span>AMO Patronal Privé (4.11%) :</span> <span id="resAmoPat">0 DH</span></div>
                     </div>
-                    <!-- Bloc Public -->
                     <div id="blocPublic" style="display:none;">
                         <div class="result-item"><span>Cotisation CNOPS Adhérent :</span> <span id="resCnopsAdherent">0 DH</span></div>
                         <div class="result-item"><span>Cotisation CNOPS Employeur :</span> <span id="resCnopsEmployeur">0 DH</span></div>
@@ -427,33 +428,51 @@
         </div>
     </div>
 
-    <!-- VUE 2 : GUIDE & PRINCIPES FISCAUX ET SOCIAUX -->
+    <!-- VUE 2 : GUIDE & PRINCIPES FISCAUX ET SOCIAUX ENRICHI -->
     <div id="guideView" class="section-view">
         <div class="card">
-            <h2>Guide des Principes Fiscaux & Sociaux au Maroc</h2>
-            
-            <h3>1. Impôt sur le Revenu (IR)</h3>
-            <p><strong>Assiette :</strong> Salaires, profits professionnels, revenus fonciers.</p>
-            <p><strong>Principes :</strong> Barème progressif par tranches et déductions familiales.</p>
+            <h2>Encyclopédie & Guide Technique de la Fiscalité Marocaine (DGI)</h2>
+            <p>Ce guide détaille l'assiette, les modes de calcul, les taux en vigueur ainsi que les exonérations réglementaires applicables au Maroc.</p>
 
-            <h3>2. Cotisations Sociales (CNSS, AMO & CNOPS)</h3>
-            <p><strong>Assiette :</strong> Salaire brut ou traitement de base.</p>
-            <p><strong>Principes :</strong> Couverture médicale et prestations sociales. La CNSS/AMO concerne le secteur privé, tandis que la CNOPS couvre les fonctionnaires et agents du secteur public.</p>
+            <h3>1. Impôt sur le Revenu (IR Salarial & Professionnel)</h3>
+            <p><strong>Assiette :</strong> L'IR s'applique aux revenus nets des personnes physiques (traitements, salaires, émoluments, indemnités, ainsi que les revenus professionnels et de capitaux).</p>
+            <p><strong>Mode de calcul et Formule :</strong> Le Salaire Brut Imposable (SBI) subit des déductions (frais professionnels, cotisations CNSS/AMO) pour arriver au Salaire Net Imposable (SNI). L'impôt est ensuite calculé via le barème progressif annuel :</p>
+            <ul>
+                <li>Tranche 1 (0 à 40 000 DH) : 0% | Déduction : 0 DH</li>
+                <li>Tranche 2 (40 001 à 60 000 DH) : 10% | Déduction : 4 000 DH</li>
+                <li>Tranche 3 (60 001 à 80 000 DH) : 20% | Déduction : 10 000 DH</li>
+                <li>Tranche 4 (80 001 à 100 000 DH) : 30% | Déduction : 18 000 DH</li>
+                <li>Tranche 5 (100 001 à 180 000 DH) : 34% | Déduction : 22 000 DH</li>
+                <li>Tranche 6 (> 180 000 DH) : 38% | Déduction : 29 200 DH</li>
+            </ul>
+            <p><strong>Déductions familiales :</strong> Réduction de 500 DH par personne à charge (conjoint et enfants), plafonnée à 6 personnes (3 000 DH/an).</p>
 
-            <h3>3. Impôt sur les Sociétés (IS) & Cotisation Minimale</h3>
-            <p><strong>Assiette :</strong> Bénéfices nets des personnes morales.</p>
+            <h3>2. Impôt sur les Sociétés (IS) & Cotisation Minimale</h3>
+            <p><strong>Assiette :</strong> L'IS frappe l'ensemble des bénéfices et revenus des sociétés de capitaux (SA, SARL, etc.) et établissements publics à caractère commercial.</p>
+            <p><strong>Barème et Taux :</strong> Taux proportionnels ou progressifs selon le bénéfice net (ex: 10% pour les PME sur les premiers tranches, 20% au-delà selon les barèmes de la loi de finances).</p>
+            <p><strong>Cotisation Minimale (CM) :</strong> Impôt forfaitaire obligatoire dû même en cas de déficit, calculé sur le Chiffre d'Affaires HT (généralement 0.25% pour les activités commerciales/industrielles de base).</p>
 
-            <h3>4. Impôt sur les Profits Fonciers (IPF)</h3>
-            <p><strong>Assiette :</strong> Plus-values de cession immobilière (taux 20% ou min 3%).</p>
+            <h3>3. Impôt sur les Profits Fonciers (IPF)</h3>
+            <p><strong>Assiette :</strong> Plus-values réalisées lors de la cession à titre onéreux d'immeubles ou de droits réels immobiliers.</p>
+            <p><strong>Formule :</strong> $\text{Profit Brut} = \text{Prix de Cession Net} - (\text{Prix d'Acquisition Majoré des frais et travaux})$.</p>
+            <p><strong>Taux et Minima :</strong> Taux de 20% avec un minimum de perception de 3% du prix de cession.</p>
+            <p><strong>Exonérations majeures :</strong> Cession de l'habitation principale détenue depuis au moins 5 ans, cessions entre proches parents (ligne directe).</p>
 
-            <h3>5. Revenus Fonciers (Location)</h3>
-            <p><strong>Assiette :</strong> Loyers bruts perçus (abattement forfaitaire de 40%).</p>
+            <h3>4. Revenus Fonciers (Location d'Immeubles)</h3>
+            <p><strong>Assiette :</strong> Revenus bruts découlant de la location de biens immeubles bâtis ou non bâtis.</p>
+            <p><strong>Règles de calcul :</strong> Application d'un abattement forfaitaire libératoire de 40% pour les revenus bruts annuels inférieurs au seuil d'imposition par barème, ou taxation directe avec déduction des charges réelles justifiées.</p>
 
-            <h3>6. Taxe sur la Valeur Ajoutée (TVA)</h3>
-            <p><strong>Assiette :</strong> Chiffre d'affaires taxable (récupération sur achats).</p>
+            <h3>5. Taxe sur la Valeur Ajoutée (TVA)</h3>
+            <p><strong>Assiette :</strong> Chiffre d'affaires réalisé par les opérations industrielles, commerciales, artisanales et professions libérales.</p>
+            <p><strong>Taux applicables :</strong> Taux normal de 20%, et taux réduits de 14% (transport, énergie), 10% (restauration, produits pharmaceutiques) et 7% (produits de base).</p>
 
-            <h3>7. Taxes Locales (Taxe Professionnelle & TSC)</h3>
-            <p><strong>Assiette :</strong> Valeur locative des biens professionnels et bâtis.</p>
+            <h3>6. Taxes Locales (Taxe Professionnelle & TSC)</h3>
+            <p><strong>Taxe Professionnelle (TP) :</strong> Assise sur la valeur locative des immobilisations techniques et professionnelles (taux variant de 10% à 30%).</p>
+            <p><strong>Taxe de Services Communaux (TSC / Édilité) :</strong> Assise sur la valeur locative des immeubles bâtis (10% en zone urbaine, 6.5% en zone périphérique).</p>
+
+            <h3>7. Cotisations Sociales (CNSS, AMO & CNOPS)</h3>
+            <p><strong>Secteur Privé (CNSS & AMO) :</strong> Part salariale (4.48% pour la CNSS plafonnée à 6000 DH et 2.26% pour l'AMO sans plafond) et parts patronales finançant les allocations familiales, retraites et prestations médicales.</p>
+            <p><strong>Secteur Public (CNOPS) :</strong> Prélèvements mutualisés et obligatoires partagés entre fonctionnaires et employeurs publics pour la couverture médicale.</p>
         </div>
     </div>
 
@@ -538,9 +557,8 @@
             document.getElementById('resCnssPat').innerText = cnssPat.toFixed(2) + " DH";
             document.getElementById('resAmoPat').innerText = amoPat.toFixed(2) + " DH";
         } else {
-            // CNOPS (Secteur Public - estimation standard de la cotisation mutuelle/CNOPS part adhérent et employeur)
-            let cnopsAdherent = brut * 0.05; // Exemple indicatif part adhérent
-            let cnopsEmployeur = brut * 0.05; // Exemple indicatif part employeur
+            let cnopsAdherent = brut * 0.05;
+            let cnopsEmployeur = brut * 0.05;
             totalGlobal = cnopsAdherent + cnopsEmployeur;
 
             document.getElementById('resCnopsAdherent').innerText = cnopsAdherent.toFixed(2) + " DH";
