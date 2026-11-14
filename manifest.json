@@ -1,24 +1,16 @@
 {
   "name": "Simulateur & Guide Fiscal & Social - Maroc",
   "short_name": "FiscalMaroc",
-  "description": "Outil complet de simulation et guide technique de la fiscalité et du social au Maroc (IR, IS, TVA, CNSS, CNOPS, etc.).",
-  "start_url": "./index.html",
+  "description": "Outil complet de simulation et guide technique de la fiscalité et du social au Maroc.",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#0b192c",
   "theme_color": "#ffcc00",
-  "orientation": "portrait",
   "icons": [
     {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icon-512.png",
+      "src": "icon.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ]
 }
