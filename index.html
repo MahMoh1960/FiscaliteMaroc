@@ -450,7 +450,7 @@
             <h3>2. Impôt sur les Sociétés (IS) & Cotisation Minimale</h3>
             <p><strong>Assiette :</strong> Bénéfices nets réalisés par les sociétés de capitaux (SA, SARL) et les entités commerciales assimilées.</p>
             <p><strong>Mode de calcul :</strong> Taux proportionnels ou progressifs selon le niveau du bénéfice net imposable.</p>
-            <p><strong>Cotisation Minimale (CM) :</strong> Impôt forfaitaire de sécurité exigible même en cas de déficit, calculé en appliquant un taux (généralement 0.25%) sur le Chiffre d'Affaires HT.</p>
+            <p><strong>Cotisation Minimale (CM) :</strong> Impôt forfaitaire de sécurité exigible même en cas de déficit, calculé en appliquant un taux (géralement 0.25%) sur le Chiffre d'Affaires HT.</p>
 
             <h3>3. Impôt sur les Profits Fonciers (IPF)</h3>
             <p><strong>Assiette :</strong> Plus-values et gains réalisés lors de la vente ou cession de biens immobiliers.</p>
@@ -648,5 +648,17 @@
         document.getElementById('tvaResult').style.display = "block";
     }
 </script>
+
+<!-- Service Worker Registration Script -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then((reg) => console.log('Service Worker enregistré avec succès:', reg.scope))
+        .catch((err) => console.log('Échec d’enregistrement du Service Worker:', err));
+    });
+  }
+</script>
+
 </body>
 </html>
