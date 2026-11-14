@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulateur & Guide Fiscal Marocain</title>
+    <title>Simulateur & Guide Fiscal & Taxes Maroc</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0b192c">
     <style>
@@ -70,7 +70,7 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 0.95rem;
             transition: all 0.2s;
         }
 
@@ -223,14 +223,14 @@
 
 <div class="container">
     <header>
-        <h1>Fiscalité Marocaine (DGI)</h1>
-        <p class="subtitle">Outils de Simulation & Guide des Principes Fiscaux</p>
+        <h1>Fiscalité Marocaine (Impôts & Taxes)</h1>
+        <p class="subtitle">Outils de Simulation & Guide Fiscal Complet</p>
     </header>
 
-    <!-- Navigation Principale entre Simulateur et Guide -->
+    <!-- Navigation Principale -->
     <div class="main-nav">
         <button class="main-nav-btn active" onclick="switchMainView(event, 'simulateurView')">Simulateurs</button>
-        <button class="main-nav-btn" onclick="switchMainView(event, 'guideView')">Guide & Principes Fiscaux</button>
+        <button class="main-nav-btn" onclick="switchMainView(event, 'guideView')">Guide & Principes</button>
     </div>
 
     <!-- VUE 1 : LES SIMULATEURS -->
@@ -240,6 +240,7 @@
             <button class="tab-btn" onclick="switchTab(event, 'isTab')">IS & CM</button>
             <button class="tab-btn" onclick="switchTab(event, 'ipfTab')">Profits Fonciers</button>
             <button class="tab-btn" onclick="switchTab(event, 'foncierTab')">Revenus Fonciers</button>
+            <button class="tab-btn" onclick="switchTab(event, 'taxesTab')">Taxes Locales</button>
             <button class="tab-btn" onclick="switchTab(event, 'tvaTab')">TVA</button>
         </div>
 
@@ -324,7 +325,40 @@
                 <div class="result-box" id="foncierResult" style="display:none;">
                     <div class="result-item"><span>Abattement forfaitaire (40%) :</span> <span id="resAbattement">0 DH</span></div>
                     <div class="result-item"><span>Revenu Net Imposable :</span> <span id="resNetFoncier">0 DH</span></div>
-                    <div class="result-item total"><span>IR Foncier Dû (Barème) :</span> <span id="resIrFoncier">0 DH</span></div>
+                    <div class="result-item total"><span>IR Foncier Dû :</span> <span id="resIrFoncier">0 DH</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ONGLET TAXES LOCALES -->
+        <div id="taxesTab" class="tab-content">
+            <div class="card">
+                <h2>Simulateur des Taxes Locales (TP & TSC)</h2>
+                <div class="form-group">
+                    <label>Valeur Locative Annuelle du Local / Matériel (DH)</label>
+                    <input type="number" id="valeurLocative" value="50000">
+                </div>
+                <div class="form-group">
+                    <label>Taux de Taxe Professionnelle (TP)</label>
+                    <select id="tauxTP">
+                        <option value="0.10">10% (Classe 3)</option>
+                        <option value="20">20% (Classe 2 - Taux standard)</option>
+                        <option value="0.30">30% (Classe 1)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Taux Taxe de Services Communaux (TSC / Édilité)</label>
+                    <select id="tauxTSC">
+                        <option value="0.10">10% (Zone Urbaine)</option>
+                        <option value="0.065">6.5% (Zone Périphérique)</option>
+                    </select>
+                </div>
+                <button class="calc-btn" onclick="calculerTaxesLocales()">Calculer les Taxes</button>
+
+                <div class="result-box" id="taxesResult" style="display:none;">
+                    <div class="result-item"><span>Taxe Professionnelle (TP) :</span> <span id="resTP">0 DH</span></div>
+                    <div class="result-item"><span>Taxe de Services Communaux (TSC) :</span> <span id="resTSC">0 DH</span></div>
+                    <div class="result-item total"><span>Total Taxes Locales :</span> <span id="resTotalTaxes">0 DH</span></div>
                 </div>
             </div>
         </div>
@@ -359,27 +393,35 @@
     <!-- VUE 2 : GUIDE & PRINCIPES FISCAUX -->
     <div id="guideView" class="section-view">
         <div class="card">
-            <h2>Guide des Principes Fiscaux au Maroc</h2>
+            <h2>Guide des Principes Fiscaux & Taxes au Maroc</h2>
             
-            <h3>1. Impôt sur le Revenu (IR Salarial & Professionnel)</h3>
-            <p><strong>Assiette :</strong> Ensemble des revenus nets perçus par les personnes physiques (salaires, profits professionnels, etc.).</p>
-            <p><strong>Principes clés :</strong> Barème progressif par tranches annuelles. Application de déductions pour charges de famille (500 DH par personne à charge, plafonnées à 6 personnes).</p>
+            <h3>1. Impôt sur le Revenu (IR)</h3>
+            <p><strong>Assiette :</strong> Salaires, profits professionnels, revenus fonciers.</p>
+            <p><strong>Principes :</strong> Barème progressif par tranches et déductions familiales.</p>
 
             <h3>2. Impôt sur les Sociétés (IS) & Cotisation Minimale</h3>
-            <p><strong>Assiette :</strong> Bénéfices nets réalisés par les sociétés de capitaux et autres personnes morales.</p>
-            <p><strong>Principes clés :</strong> Taux proportionnels ou progressifs selon le niveau de bénéfice. La <em>Cotisation Minimale (CM)</em> garantit un impôt de base calculé sur le chiffre d'affaires, même en cas de déficit.</p>
+            <p><strong>Assiette :</strong> Bénéfices nets des personnes morales.</p>
+            <p><strong>Principes :</strong> Taux proportionnels/progressifs et plancher de sécurité via la Cotisation Minimale sur le CA.</p>
 
             <h3>3. Impôt sur les Profits Fonciers (IPF)</h3>
-            <p><strong>Assiette :</strong> Plus-values réalisées lors de la cession de biens immobiliers ou de droits réels.</p>
-            <p><strong>Principes clés :</strong> Calculé sur la différence entre le prix de cession net et le prix d'acquisition majoré. Taux général de 20%, avec un minimum de perception de 3% du prix de cession.</p>
+            <p><strong>Assiette :</strong> Plus-values de cession immobilière.</p>
+            <p><strong>Principes :</strong> Différence entre prix de cession net et prix d'acquisition majoré (taux 20% ou min 3%).</p>
 
             <h3>4. Revenus Fonciers (Location)</h3>
-            <p><strong>Assiette :</strong> Revenus bruts provenant de la location de biens immeubles.</p>
-            <p><strong>Principes clés :</strong> Abattement forfaitaire libératoire de 40% pour les revenus bruts inférieurs à une certaine tranche, ou imposition au barème progressif de l'IR avec déduction des charges réelles.</p>
+            <p><strong>Assiette :</strong> Loyers bruts perçus.</p>
+            <p><strong>Principes :</strong> Abattement forfaitaire libératoire de 40% sous conditions.</p>
 
             <h3>5. Taxe sur la Valeur Ajoutée (TVA)</h3>
-            <p><strong>Assiette :</strong> Chiffre d'affaires réalisé par les opérations industrielles, commerciales, artisanales ou de profession libérale.</p>
-            <p><strong>Principes clés :</strong> Impôt indirect supporté par le consommateur final, fondé sur le mécanisme de déduction de la TVA sur charges (TVA due = TVA sur ventes - TVA sur achats).</p>
+            <p><strong>Assiette :</strong> Chiffre d'affaires taxable.</p>
+            <p><strong>Principes :</strong> Récupération sur les achats (déductibilité) et reversement de la différence.</p>
+
+            <h3>6. Taxe Professionnelle (TP) [Taxes Locales]</h3>
+            <p><strong>Assiette :</strong> Valeur locative des immobilisations professionnelles.</p>
+            <p><strong>Principes :</strong> Due par toute personne exerçant une profession, industrie ou commerce au Maroc (barème selon la classe).</p>
+
+            <h3>7. Taxe de Services Communaux (TSC / Édilité) [Taxes Locales]</h3>
+            <p><strong>Assiette :</strong> Immeubles bâtis et constructions.</p>
+            <p><strong>Principes :</strong> Assise sur la valeur locative (10% en zone urbaine, 6.5% en zone périphérique) pour financer les services communaux.</p>
         </div>
     </div>
 
@@ -466,7 +508,6 @@
         let abattement = brut * 0.40;
         let netImposable = brut - abattement;
 
-        // Application simplifiée du barème IR sur le revenu foncier net
         let irFoncier = 0;
         let netAnnuel = netImposable;
         if (netAnnuel > 40000 && netAnnuel <= 60000) irFoncier = (netAnnuel * 0.10) - 4000;
@@ -480,6 +521,21 @@
         document.getElementById('resNetFoncier').innerText = netImposable.toLocaleString() + " DH";
         document.getElementById('resIrFoncier').innerText = irFoncier.toLocaleString() + " DH";
         document.getElementById('foncierResult').style.display = "block";
+    }
+
+    function calculerTaxesLocales() {
+        let vl = parseFloat(document.getElementById('valeurLocative').value) || 0;
+        let tauxTp = parseFloat(document.getElementById('tauxTP').value) || 0.20;
+        let tauxTsc = parseFloat(document.getElementById('tauxTSC').value) || 0.10;
+
+        let montantTP = vl * tauxTp;
+        let montantTSC = vl * tauxTsc;
+        let totalTaxes = montantTP + montantTSC;
+
+        document.getElementById('resTP').innerText = montantTP.toLocaleString() + " DH";
+        document.getElementById('resTSC').innerText = montantTSC.toLocaleString() + " DH";
+        document.getElementById('resTotalTaxes').innerText = totalTaxes.toLocaleString() + " DH";
+        document.getElementById('taxesResult').style.display = "block";
     }
 
     function calculerTVA() {
