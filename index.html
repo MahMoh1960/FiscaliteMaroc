@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur Fiscal Marocain - PME & Salaires</title>
+    <!-- Manifest PWA pour compilation APK -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0b192c">
+    <style>
+        :root {
+            --bg-color: #0b192c;
+            --card-bg: #1e3e62;
+            --accent-yellow: #ffcc00;
+            --text-light: #ffffff;
+            --text-muted: #94a3b8;
+            --border-color: #314e6b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-light);
+            padding: 15px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 2px solid var(--accent-yellow);
+        }
+
+        h1 {
+            color: var(--accent-yellow);
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .tab-btn {
+            background-color: var(--card-bg);
+            color: var(--text-light);
+            border: 1px solid var(--border-color);
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background-color: var(--accent-yellow);
+            color: var(--bg-color);
+            border-color: var(--accent-yellow);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--accent-yellow);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-yellow);
+        }
+
+        button.calc-btn {
+            width: 100%;
+            background-color: var(--accent-yellow);
+            color: var(--bg-color);
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button.calc-btn:active {
+            transform: scale(0.98);
+        }
+
+        .result-box {
+            margin-top: 20px;
+            background-color: rgba(0, 0, 0, 0.25);
+            border-left: 4px solid var(--accent-yellow);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .result-item.total {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--accent-yellow);
+            border-top: 1px dashed var(--border-color);
+            padding-top: 8px;
+            margin-top: 8px;
+        }
+
+        .legal-notice {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Simulateur Fiscal Marocain</h1>
+        <p class="subtitle">Outil de calcul (IR, IS, TVA) - Conforme DGI</p>
+    </header>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab(event, 'irTab')">Impôt sur le Revenu (IR)</button>
+        <button class="tab-btn tab" onclick="switchTab(event, 'isTab')">Impôt sur les Sociétés (IS)</button>
+        <button class="tab-btn tab" onclick="switchTab(event, 'tvaTab')">TVA & Marges</button>
+    </div>
+
+    <!-- ONGLET IR SALARIAL -->
+    <div id="irTab" class="tab-content active">
+        <div class="card">
+            <h2>Calcul de l'IR Salarial Mensuel</h2>
+            <div class="form-group">
+                <label>Salaire Brut Mensuel Imposable (SBI en DH)</label>
+                <input type="number" id="sbi" placeholder="Ex: 10000" value="10000">
+            </div>
+            <div class="form-group">
+                <label>Personnes à charge (Déductions)</label>
+                <input type="number" id="charges" min="0" max="6" value="0">
+            </div>
+            <button class="calc-btn" onclick="calculerIR()">Calculer l'IR</button>
+
+            <div class="result-box" id="irResult" style="display:none;">
+                <div class="result-item"><span>SBI Annuel :</span> <span id="resSbiAnnuel">0 DH</span></div>
+                <div class="result-item"><span>IR Brut Annuel :</span> <span id="resIrBrut">0 DH</span></div>
+                <div class="result-item"><span>Déduction Charges :</span> <span id="resCharges">0 DH</span></div>
+                <div class="result-item"><span>IR Net Annuel :</span> <span id="resIrAnnuel">0 DH</span></div>
+                <div class="result-item total"><span>IR Net Mensuel :</span> <span id="resIrMensuel">0 DH</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ONGLET IS SOCIETES -->
+    <div id="isTab" class="tab-content">
+        <div class="card">
+            <h2>Calcul de l'Impôt sur les Sociétés (IS)</h2>
+            <div class="form-group">
+                <label>Résultat Fiscal Net (Bénéfice en DH)</label>
+                <input type="number" id="benefice" placeholder="Ex: 500000" value="500000">
+            </div>
+            <button class="calc-btn" onclick="calculerIS()">Calculer l'IS</button>
+
+            <div class="result-box" id="isResult" style="display:none;">
+                <div class="result-item"><span>Tranche applicable :</span> <span id="resTrancheIS">-</span></div>
+                <div class="result-item total"><span>Montant de l'IS :</span> <span id="resMontantIS">0 DH</span></div>
+                <div class="result-item"><span>Résultat Net Après IS :</span> <span id="resNetIS">0 DH</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ONGLET TVA -->
+    <div id="tvaTab" class="tab-content">
+        <div class="card">
+            <h2>Calculateur TVA Maroc</h2>
+            <div class="form-group">
+                <label>Montant HT (DH)</label>
+                <input type="number" id="montantHT" placeholder="Ex: 1000" value="1000">
+            </div>
+            <div class="form-group">
+                <label>Taux de TVA</label>
+                <select id="tauxTVA">
+                    <option value="20">20% (Taux normal)</option>
+                    <option value="14">14% (Transport, énergie...)</option>
+                    <option value="10">10% (Restauration, produits phamaceutiques...)</option>
+                    <option value="7">7% (Produits de première nécessité)</option>
+                </select>
+            </div>
+            <button class="calc-btn" onclick="calculerTVA()">Calculer TVA</button>
+
+            <div class="result-box" id="tvaResult" style="display:none;">
+                <div class="result-item"><span>Montant HT :</span> <span id="resHT">0 DH</span></div>
+                <div class="result-item"><span>Montant TVA :</span> <span id="resTVA">0 DH</span></div>
+                <div class="result-item total"><span>Montant TTC :</span> <span id="resTTC">0 DH</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="legal-notice">
+        Calculs indicatifs basés sur la législation fiscale marocaine (DGI). Non substitutable à un avis d'expert-comptable.
+    </div>
+</div>
+
+<script>
+    function switchTab(evt, tabName) {
+        let contents = document.getElementsByClassName("tab-content");
+        for (let c of contents) c.classList.remove("active");
+
+        let buttons = document.getElementsByClassName("tab-btn");
+        for (let b of buttons) b.classList.remove("active");
+
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+
+    // Calcul IR Salarial (Barème en vigueur)
+    function calculerIR() {
+        let sbiMensuel = parseFloat(document.getElementById('sbi').value) || 0;
+        let charges = parseInt(document.getElementById('charges').value) || 0;
+        let sbiAnnuel = sbiMensuel * 12;
+
+        let irBrutAnnuel = 0;
+        let taux = 0;
+        let deductionTranche = 0;
+
+        if (sbiAnnuel <= 40000) {
+            taux = 0; deductionTranche = 0;
+        } else if (sbiAnnuel <= 60000) {
+            taux = 0.10; deductionTranche = 4000;
+        } else if (sbiAnnuel <= 80000) {
+            taux = 0.20; deductionTranche = 10000;
+        } else if (sbiAnnuel <= 100000) {
+            taux = 0.30; deductionTranche = 18000;
+        } else if (sbiAnnuel <= 180000) {
+            taux = 0.34; deductionTranche = 22000;
+        } else {
+            taux = 0.38; deductionTranche = 29200;
+        }
+
+        irBrutAnnuel = (sbiAnnuel * taux) - deductionTranche;
+        if (irBrutAnnuel < 0) irBrutAnnuel = 0;
+
+        // Déduction pour charges de famille (500 DH par personne, max 6 soit 3000 DH/an)
+        let reductionCharges = Math.min(charges, 6) * 500;
+        let irNetAnnuel = Math.max(0, irBrutAnnuel - reductionCharges);
+        let irMensuel = irNetAnnuel / 12;
+
+        document.getElementById('resSbiAnnuel').innerText = sbiAnnuel.toLocaleString() + " DH";
+        document.getElementById('resIrBrut').innerText = irBrutAnnuel.toLocaleString() + " DH";
+        document.getElementById('resCharges').innerText = "- " + reductionCharges.toLocaleString() + " DH";
+        document.getElementById('resIrAnnuel').innerText = irNetAnnuel.toLocaleString() + " DH";
+        document.getElementById('resIrMensuel').innerText = irMensuel.toFixed(2) + " DH";
+
+        document.getElementById('irResult').style.display = "block";
+    }
+
+    // Calcul IS (Barème progressif simplifié / Taux proportionnels selon bénéfice)
+    function calculerIS() {
+        let benef = parseFloat(document.getElementById('benefice').value) || 0;
+        let montantIS = 0;
+        let trancheDesc = "";
+
+        // Barème progressif standard IS au Maroc
+        if (benef <= 300000) {
+            montantIS = benef * 0.10;
+            trancheDesc = "10% (Taux réduit PME ≤ 300k DH)";
+        } else if (benef <= 1000000) {
+            montantIS = 30000 + (benef - 300000) * 0.20;
+            trancheDesc = "20% (Tranche intermédiaire)";
+        } else {
+            montantIS = benef * 0.20; // Simplification taux normal / progressif selon barème en vigueur
+            trancheDesc = "Taux proportionnel / barème standard";
+        }
+
+        let netBenef = benef - montantIS;
+
+        document.getElementById('resTrancheIS').innerText = trancheDesc;
+        document.getElementById('resMontantIS').innerText = montantIS.toLocaleString() + " DH";
+        document.getElementById('resNetIS').innerText = netBenef.toLocaleString() + " DH";
+
+        document.getElementById('isResult').style.display = "block";
+    }
+
+    // Calcul TVA
+    function calculerTVA() {
+        let ht = parseFloat(document.getElementById('montantHT').value) || 0;
+        let taux = parseFloat(document.getElementById('tauxTVA').value) || 20;
+        let tva = ht * (taux / 100);
+        let ttc = ht + tva;
+
+        document.getElementById('resHT').innerText = ht.toLocaleString() + " DH";
+        document.getElementById('resTVA').innerText = tva.toLocaleString() + " DH";
+        document.getElementById('resTTC').innerText = ttc.toLocaleString() + " DH";
+
+        document.getElementById('tvaResult').style.display = "block";
+    }
+</script>
+</body>
+</html>
