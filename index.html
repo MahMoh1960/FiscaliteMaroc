@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulateur Fiscal Marocain - PME & Salaires</title>
-    <!-- Manifest PWA pour compilation APK -->
+    <title>Simulateur & Guide Fiscal Marocain</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0b192c">
     <style>
@@ -32,7 +31,7 @@
         }
 
         .container {
-            max-width: 600px;
+            max-width: 650px;
             margin: 0 auto;
         }
 
@@ -56,6 +55,30 @@
             font-size: 0.85rem;
         }
 
+        .main-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .main-nav-btn {
+            background-color: var(--card-bg);
+            color: var(--accent-yellow);
+            border: 2px solid var(--accent-yellow);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .main-nav-btn.active {
+            background-color: var(--accent-yellow);
+            color: var(--bg-color);
+        }
+
         .tabs {
             display: flex;
             gap: 5px;
@@ -72,7 +95,7 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             white-space: nowrap;
             transition: all 0.2s;
         }
@@ -91,11 +114,11 @@
             margin-bottom: 20px;
         }
 
-        .tab-content {
+        .section-view, .tab-content {
             display: none;
         }
 
-        .tab-content.active {
+        .section-view.active, .tab-content.active {
             display: block;
         }
 
@@ -105,6 +128,24 @@
             margin-bottom: 15px;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 8px;
+        }
+
+        h3 {
+            color: var(--accent-yellow);
+            font-size: 1rem;
+            margin-top: 15px;
+            margin-bottom: 8px;
+        }
+
+        p, li {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            padding-left: 20px;
         }
 
         .form-group {
@@ -146,10 +187,6 @@
             margin-top: 10px;
         }
 
-        button.calc-btn:active {
-            transform: scale(0.98);
-        }
-
         .result-box {
             margin-top: 20px;
             background-color: rgba(0, 0, 0, 0.25);
@@ -186,181 +223,273 @@
 
 <div class="container">
     <header>
-        <h1>Simulateur Fiscal Marocain</h1>
-        <p class="subtitle">Outil de calcul (IR, IS, TVA) - Conforme DGI</p>
+        <h1>Fiscalité Marocaine (DGI)</h1>
+        <p class="subtitle">Outils de Simulation & Guide des Principes Fiscaux</p>
     </header>
 
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab(event, 'irTab')">Impôt sur le Revenu (IR)</button>
-        <button class="tab-btn tab" onclick="switchTab(event, 'isTab')">Impôt sur les Sociétés (IS)</button>
-        <button class="tab-btn tab" onclick="switchTab(event, 'tvaTab')">TVA & Marges</button>
+    <!-- Navigation Principale entre Simulateur et Guide -->
+    <div class="main-nav">
+        <button class="main-nav-btn active" onclick="switchMainView(event, 'simulateurView')">Simulateurs</button>
+        <button class="main-nav-btn" onclick="switchMainView(event, 'guideView')">Guide & Principes Fiscaux</button>
     </div>
 
-    <!-- ONGLET IR SALARIAL -->
-    <div id="irTab" class="tab-content active">
-        <div class="card">
-            <h2>Calcul de l'IR Salarial Mensuel</h2>
-            <div class="form-group">
-                <label>Salaire Brut Mensuel Imposable (SBI en DH)</label>
-                <input type="number" id="sbi" placeholder="Ex: 10000" value="10000">
-            </div>
-            <div class="form-group">
-                <label>Personnes à charge (Déductions)</label>
-                <input type="number" id="charges" min="0" max="6" value="0">
-            </div>
-            <button class="calc-btn" onclick="calculerIR()">Calculer l'IR</button>
+    <!-- VUE 1 : LES SIMULATEURS -->
+    <div id="simulateurView" class="section-view active">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab(event, 'irTab')">IR Salarial</button>
+            <button class="tab-btn" onclick="switchTab(event, 'isTab')">IS & CM</button>
+            <button class="tab-btn" onclick="switchTab(event, 'ipfTab')">Profits Fonciers</button>
+            <button class="tab-btn" onclick="switchTab(event, 'foncierTab')">Revenus Fonciers</button>
+            <button class="tab-btn" onclick="switchTab(event, 'tvaTab')">TVA</button>
+        </div>
 
-            <div class="result-box" id="irResult" style="display:none;">
-                <div class="result-item"><span>SBI Annuel :</span> <span id="resSbiAnnuel">0 DH</span></div>
-                <div class="result-item"><span>IR Brut Annuel :</span> <span id="resIrBrut">0 DH</span></div>
-                <div class="result-item"><span>Déduction Charges :</span> <span id="resCharges">0 DH</span></div>
-                <div class="result-item"><span>IR Net Annuel :</span> <span id="resIrAnnuel">0 DH</span></div>
-                <div class="result-item total"><span>IR Net Mensuel :</span> <span id="resIrMensuel">0 DH</span></div>
+        <!-- ONGLET IR -->
+        <div id="irTab" class="tab-content active">
+            <div class="card">
+                <h2>Calcul de l'IR Salarial Mensuel</h2>
+                <div class="form-group">
+                    <label>Salaire Brut Mensuel Imposable (SBI en DH)</label>
+                    <input type="number" id="sbi" value="10000">
+                </div>
+                <div class="form-group">
+                    <label>Personnes à charge (Max 6)</label>
+                    <input type="number" id="charges" min="0" max="6" value="0">
+                </div>
+                <button class="calc-btn" onclick="calculerIR()">Calculer l'IR</button>
+
+                <div class="result-box" id="irResult" style="display:none;">
+                    <div class="result-item"><span>SBI Annuel :</span> <span id="resSbiAnnuel">0 DH</span></div>
+                    <div class="result-item"><span>IR Brut Annuel :</span> <span id="resIrBrut">0 DH</span></div>
+                    <div class="result-item"><span>Déduction Charges :</span> <span id="resCharges">0 DH</span></div>
+                    <div class="result-item total"><span>IR Net Mensuel :</span> <span id="resIrMensuel">0 DH</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ONGLET IS & CM -->
+        <div id="isTab" class="tab-content">
+            <div class="card">
+                <h2>Calcul de l'IS & Cotisation Minimale</h2>
+                <div class="form-group">
+                    <label>Chiffre d'Affaires HT (pour Cotisation Minimale)</label>
+                    <input type="number" id="caHt" value="2000000">
+                </div>
+                <div class="form-group">
+                    <label>Résultat Fiscal Net (Bénéfice en DH)</label>
+                    <input type="number" id="benefice" value="300000">
+                </div>
+                <button class="calc-btn" onclick="calculerISetCM()">Calculer l'Impôt</button>
+
+                <div class="result-box" id="isResult" style="display:none;">
+                    <div class="result-item"><span>IS Calculé :</span> <span id="resMontantIS">0 DH</span></div>
+                    <div class="result-item"><span>Cotisation Minimale (0.25%) :</span> <span id="resCM">0 DH</span></div>
+                    <div class="result-item total"><span>Impôt Final Dû :</span> <span id="resImpotDu">0 DH</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ONGLET IPF -->
+        <div id="ipfTab" class="tab-content">
+            <div class="card">
+                <h2>Impôt sur les Profits Fonciers (IPF)</h2>
+                <div class="form-group">
+                    <label>Prix de Cession Net (DH)</label>
+                    <input type="number" id="prixCession" value="1000000">
+                </div>
+                <div class="form-group">
+                    <label>Prix d'Acquisition Majoré (Achat + frais + travaux en DH)</label>
+                    <input type="number" id="prixAcquisition" value="600000">
+                </div>
+                <button class="calc-btn" onclick="calculerIPF()">Calculer l'IPF</button>
+
+                <div class="result-box" id="ipfResult" style="display:none;">
+                    <div class="result-item"><span>Profit Brut Réalisé :</span> <span id="resProfitBrut">0 DH</span></div>
+                    <div class="result-item"><span>IPF (20%) :</span> <span id="resIPFCalc">0 DH</span></div>
+                    <div class="result-item"><span>Cotisation Minimale (3% cession) :</span> <span id="resIPFMin">0 DH</span></div>
+                    <div class="result-item total"><span>Impôt Exigible :</span> <span id="resIPFDur">0 DH</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ONGLET REVENUS FONCIERS -->
+        <div id="foncierTab" class="tab-content">
+            <div class="card">
+                <h2>Impôt sur les Revenus Fonciers (Location)</h2>
+                <div class="form-group">
+                    <label>Montant Brut des Loyers Encaissés (Annuel en DH)</label>
+                    <input type="number" id="loyerBrut" value="60000">
+                </div>
+                <button class="calc-btn" onclick="calculerFoncier()">Calculer l'IR Foncier</button>
+
+                <div class="result-box" id="foncierResult" style="display:none;">
+                    <div class="result-item"><span>Abattement forfaitaire (40%) :</span> <span id="resAbattement">0 DH</span></div>
+                    <div class="result-item"><span>Revenu Net Imposable :</span> <span id="resNetFoncier">0 DH</span></div>
+                    <div class="result-item total"><span>IR Foncier Dû (Barème) :</span> <span id="resIrFoncier">0 DH</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ONGLET TVA -->
+        <div id="tvaTab" class="tab-content">
+            <div class="card">
+                <h2>Taxe sur la Valeur Ajoutée (TVA)</h2>
+                <div class="form-group">
+                    <label>Montant HT (DH)</label>
+                    <input type="number" id="montantHT" value="1000">
+                </div>
+                <div class="form-group">
+                    <label>Taux de TVA</label>
+                    <select id="tauxTVA">
+                        <option value="20">20% (Taux normal)</option>
+                        <option value="14">14% (Transport / Énergie)</option>
+                        <option value="10">10% (Restauration / Tourisme)</option>
+                        <option value="7">7% (Produits de base)</option>
+                    </select>
+                </div>
+                <button class="calc-btn" onclick="calculerTVA()">Calculer TVA</button>
+
+                <div class="result-box" id="tvaResult" style="display:none;">
+                    <div class="result-item"><span>Montant TVA :</span> <span id="resTVA">0 DH</span></div>
+                    <div class="result-item total"><span>Montant TTC :</span> <span id="resTTC">0 DH</span></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- ONGLET IS SOCIETES -->
-    <div id="isTab" class="tab-content">
+    <!-- VUE 2 : GUIDE & PRINCIPES FISCAUX -->
+    <div id="guideView" class="section-view">
         <div class="card">
-            <h2>Calcul de l'Impôt sur les Sociétés (IS)</h2>
-            <div class="form-group">
-                <label>Résultat Fiscal Net (Bénéfice en DH)</label>
-                <input type="number" id="benefice" placeholder="Ex: 500000" value="500000">
-            </div>
-            <button class="calc-btn" onclick="calculerIS()">Calculer l'IS</button>
+            <h2>Guide des Principes Fiscaux au Maroc</h2>
+            
+            <h3>1. Impôt sur le Revenu (IR Salarial & Professionnel)</h3>
+            <p><strong>Assiette :</strong> Ensemble des revenus nets perçus par les personnes physiques (salaires, profits professionnels, etc.).</p>
+            <p><strong>Principes clés :</strong> Barème progressif par tranches annuelles. Application de déductions pour charges de famille (500 DH par personne à charge, plafonnées à 6 personnes).</p>
 
-            <div class="result-box" id="isResult" style="display:none;">
-                <div class="result-item"><span>Tranche applicable :</span> <span id="resTrancheIS">-</span></div>
-                <div class="result-item total"><span>Montant de l'IS :</span> <span id="resMontantIS">0 DH</span></div>
-                <div class="result-item"><span>Résultat Net Après IS :</span> <span id="resNetIS">0 DH</span></div>
-            </div>
-        </div>
-    </div>
+            <h3>2. Impôt sur les Sociétés (IS) & Cotisation Minimale</h3>
+            <p><strong>Assiette :</strong> Bénéfices nets réalisés par les sociétés de capitaux et autres personnes morales.</p>
+            <p><strong>Principes clés :</strong> Taux proportionnels ou progressifs selon le niveau de bénéfice. La <em>Cotisation Minimale (CM)</em> garantit un impôt de base calculé sur le chiffre d'affaires, même en cas de déficit.</p>
 
-    <!-- ONGLET TVA -->
-    <div id="tvaTab" class="tab-content">
-        <div class="card">
-            <h2>Calculateur TVA Maroc</h2>
-            <div class="form-group">
-                <label>Montant HT (DH)</label>
-                <input type="number" id="montantHT" placeholder="Ex: 1000" value="1000">
-            </div>
-            <div class="form-group">
-                <label>Taux de TVA</label>
-                <select id="tauxTVA">
-                    <option value="20">20% (Taux normal)</option>
-                    <option value="14">14% (Transport, énergie...)</option>
-                    <option value="10">10% (Restauration, produits phamaceutiques...)</option>
-                    <option value="7">7% (Produits de première nécessité)</option>
-                </select>
-            </div>
-            <button class="calc-btn" onclick="calculerTVA()">Calculer TVA</button>
+            <h3>3. Impôt sur les Profits Fonciers (IPF)</h3>
+            <p><strong>Assiette :</strong> Plus-values réalisées lors de la cession de biens immobiliers ou de droits réels.</p>
+            <p><strong>Principes clés :</strong> Calculé sur la différence entre le prix de cession net et le prix d'acquisition majoré. Taux général de 20%, avec un minimum de perception de 3% du prix de cession.</p>
 
-            <div class="result-box" id="tvaResult" style="display:none;">
-                <div class="result-item"><span>Montant HT :</span> <span id="resHT">0 DH</span></div>
-                <div class="result-item"><span>Montant TVA :</span> <span id="resTVA">0 DH</span></div>
-                <div class="result-item total"><span>Montant TTC :</span> <span id="resTTC">0 DH</span></div>
-            </div>
+            <h3>4. Revenus Fonciers (Location)</h3>
+            <p><strong>Assiette :</strong> Revenus bruts provenant de la location de biens immeubles.</p>
+            <p><strong>Principes clés :</strong> Abattement forfaitaire libératoire de 40% pour les revenus bruts inférieurs à une certaine tranche, ou imposition au barème progressif de l'IR avec déduction des charges réelles.</p>
+
+            <h3>5. Taxe sur la Valeur Ajoutée (TVA)</h3>
+            <p><strong>Assiette :</strong> Chiffre d'affaires réalisé par les opérations industrielles, commerciales, artisanales ou de profession libérale.</p>
+            <p><strong>Principes clés :</strong> Impôt indirect supporté par le consommateur final, fondé sur le mécanisme de déduction de la TVA sur charges (TVA due = TVA sur ventes - TVA sur achats).</p>
         </div>
     </div>
 
     <div class="legal-notice">
-        Calculs indicatifs basés sur la législation fiscale marocaine (DGI). Non substitutable à un avis d'expert-comptable.
+        Conforme DGI - Application de simulation fiscale marocaine hébergeable sur GitHub.
     </div>
 </div>
 
 <script>
+    function switchMainView(evt, viewId) {
+        let views = document.getElementsByClassName("section-view");
+        for (let v of views) v.classList.remove("active");
+        let navBtns = document.getElementsByClassName("main-nav-btn");
+        for (let b of navBtns) b.classList.remove("active");
+
+        document.getElementById(viewId).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+
     function switchTab(evt, tabName) {
         let contents = document.getElementsByClassName("tab-content");
         for (let c of contents) c.classList.remove("active");
-
         let buttons = document.getElementsByClassName("tab-btn");
         for (let b of buttons) b.classList.remove("active");
-
         document.getElementById(tabName).classList.add("active");
         evt.currentTarget.classList.add("active");
     }
 
-    // Calcul IR Salarial (Barème en vigueur)
     function calculerIR() {
         let sbiMensuel = parseFloat(document.getElementById('sbi').value) || 0;
         let charges = parseInt(document.getElementById('charges').value) || 0;
         let sbiAnnuel = sbiMensuel * 12;
 
-        let irBrutAnnuel = 0;
-        let taux = 0;
-        let deductionTranche = 0;
+        let taux = 0, deductionTranche = 0;
+        if (sbiAnnuel > 40000 && sbiAnnuel <= 60000) { taux = 0.10; deductionTranche = 4000; }
+        else if (sbiAnnuel > 60000 && sbiAnnuel <= 80000) { taux = 0.20; deductionTranche = 10000; }
+        else if (sbiAnnuel > 80000 && sbiAnnuel <= 100000) { taux = 0.30; deductionTranche = 18000; }
+        else if (sbiAnnuel > 100000 && sbiAnnuel <= 180000) { taux = 0.34; deductionTranche = 22000; }
+        else if (sbiAnnuel > 180000) { taux = 0.38; deductionTranche = 29200; }
 
-        if (sbiAnnuel <= 40000) {
-            taux = 0; deductionTranche = 0;
-        } else if (sbiAnnuel <= 60000) {
-            taux = 0.10; deductionTranche = 4000;
-        } else if (sbiAnnuel <= 80000) {
-            taux = 0.20; deductionTranche = 10000;
-        } else if (sbiAnnuel <= 100000) {
-            taux = 0.30; deductionTranche = 18000;
-        } else if (sbiAnnuel <= 180000) {
-            taux = 0.34; deductionTranche = 22000;
-        } else {
-            taux = 0.38; deductionTranche = 29200;
-        }
-
-        irBrutAnnuel = (sbiAnnuel * taux) - deductionTranche;
-        if (irBrutAnnuel < 0) irBrutAnnuel = 0;
-
-        // Déduction pour charges de famille (500 DH par personne, max 6 soit 3000 DH/an)
+        let irBrut = Math.max(0, (sbiAnnuel * taux) - deductionTranche);
         let reductionCharges = Math.min(charges, 6) * 500;
-        let irNetAnnuel = Math.max(0, irBrutAnnuel - reductionCharges);
-        let irMensuel = irNetAnnuel / 12;
+        let irNetMensuel = Math.max(0, (irBrut - reductionCharges)) / 12;
 
         document.getElementById('resSbiAnnuel').innerText = sbiAnnuel.toLocaleString() + " DH";
-        document.getElementById('resIrBrut').innerText = irBrutAnnuel.toLocaleString() + " DH";
+        document.getElementById('resIrBrut').innerText = irBrut.toLocaleString() + " DH";
         document.getElementById('resCharges').innerText = "- " + reductionCharges.toLocaleString() + " DH";
-        document.getElementById('resIrAnnuel').innerText = irNetAnnuel.toLocaleString() + " DH";
-        document.getElementById('resIrMensuel').innerText = irMensuel.toFixed(2) + " DH";
-
+        document.getElementById('resIrMensuel').innerText = irNetMensuel.toFixed(2) + " DH";
         document.getElementById('irResult').style.display = "block";
     }
 
-    // Calcul IS (Barème progressif simplifié / Taux proportionnels selon bénéfice)
-    function calculerIS() {
+    function calculerISetCM() {
+        let caHt = parseFloat(document.getElementById('caHt').value) || 0;
         let benef = parseFloat(document.getElementById('benefice').value) || 0;
-        let montantIS = 0;
-        let trancheDesc = "";
 
-        // Barème progressif standard IS au Maroc
-        if (benef <= 300000) {
-            montantIS = benef * 0.10;
-            trancheDesc = "10% (Taux réduit PME ≤ 300k DH)";
-        } else if (benef <= 1000000) {
-            montantIS = 30000 + (benef - 300000) * 0.20;
-            trancheDesc = "20% (Tranche intermédiaire)";
-        } else {
-            montantIS = benef * 0.20; // Simplification taux normal / progressif selon barème en vigueur
-            trancheDesc = "Taux proportionnel / barème standard";
-        }
+        let montantIS = benef <= 300000 ? benef * 0.10 : benef * 0.20;
+        let montantCM = caHt * 0.0025; 
+        let impotDu = Math.max(montantIS, montantCM);
 
-        let netBenef = benef - montantIS;
-
-        document.getElementById('resTrancheIS').innerText = trancheDesc;
         document.getElementById('resMontantIS').innerText = montantIS.toLocaleString() + " DH";
-        document.getElementById('resNetIS').innerText = netBenef.toLocaleString() + " DH";
-
+        document.getElementById('resCM').innerText = montantCM.toLocaleString() + " DH";
+        document.getElementById('resImpotDu').innerText = impotDu.toLocaleString() + " DH";
         document.getElementById('isResult').style.display = "block";
     }
 
-    // Calcul TVA
+    function calculerIPF() {
+        let cession = parseFloat(document.getElementById('prixCession').value) || 0;
+        let acquisition = parseFloat(document.getElementById('prixAcquisition').value) || 0;
+
+        let profitBrut = Math.max(0, cession - acquisition);
+        let ipfCalcul = profitBrut * 0.20;
+        let ipfMin = cession * 0.03; 
+        let ipfExigible = Math.max(ipfCalcul, ipfMin);
+
+        document.getElementById('resProfitBrut').innerText = profitBrut.toLocaleString() + " DH";
+        document.getElementById('resIPFCalc').innerText = ipfCalcul.toLocaleString() + " DH";
+        document.getElementById('resIPFMin').innerText = ipfMin.toLocaleString() + " DH";
+        document.getElementById('resIPFDur').innerText = ipfExigible.toLocaleString() + " DH";
+        document.getElementById('ipfResult').style.display = "block";
+    }
+
+    function calculerFoncier() {
+        let brut = parseFloat(document.getElementById('loyerBrut').value) || 0;
+        let abattement = brut * 0.40;
+        let netImposable = brut - abattement;
+
+        // Application simplifiée du barème IR sur le revenu foncier net
+        let irFoncier = 0;
+        let netAnnuel = netImposable;
+        if (netAnnuel > 40000 && netAnnuel <= 60000) irFoncier = (netAnnuel * 0.10) - 4000;
+        else if (netAnnuel > 60000 && netAnnuel <= 80000) irFoncier = (netAnnuel * 0.20) - 10000;
+        else if (netAnnuel > 80000 && netAnnuel <= 100000) irFoncier = (netAnnuel * 0.30) - 18000;
+        else if (netAnnuel > 100000 && netAnnuel <= 180000) irFoncier = (netAnnuel * 0.34) - 22000;
+        else if (netAnnuel > 180000) irFoncier = (netAnnuel * 0.38) - 29200;
+        irFoncier = Math.max(0, irFoncier);
+
+        document.getElementById('resAbattement').innerText = abattement.toLocaleString() + " DH";
+        document.getElementById('resNetFoncier').innerText = netImposable.toLocaleString() + " DH";
+        document.getElementById('resIrFoncier').innerText = irFoncier.toLocaleString() + " DH";
+        document.getElementById('foncierResult').style.display = "block";
+    }
+
     function calculerTVA() {
         let ht = parseFloat(document.getElementById('montantHT').value) || 0;
         let taux = parseFloat(document.getElementById('tauxTVA').value) || 20;
         let tva = ht * (taux / 100);
         let ttc = ht + tva;
 
-        document.getElementById('resHT').innerText = ht.toLocaleString() + " DH";
         document.getElementById('resTVA').innerText = tva.toLocaleString() + " DH";
         document.getElementById('resTTC').innerText = ttc.toLocaleString() + " DH";
-
         document.getElementById('tvaResult').style.display = "block";
     }
 </script>
