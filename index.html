@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulateur & Guide Fiscal & Taxes Maroc</title>
+    <title>Simulateur & Guide Fiscal & Social - Maroc</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0b192c">
     <style>
@@ -223,8 +223,8 @@
 
 <div class="container">
     <header>
-        <h1>Fiscalité Marocaine (Impôts & Taxes)</h1>
-        <p class="subtitle">Outils de Simulation & Guide Fiscal Complet</p>
+        <h1>Fiscalité & Social Maroc</h1>
+        <p class="subtitle">Impôts, Taxes & Cotisations Sociales (CNSS, AMO, CNOPS)</p>
     </header>
 
     <!-- Navigation Principale -->
@@ -237,6 +237,7 @@
     <div id="simulateurView" class="section-view active">
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab(event, 'irTab')">IR Salarial</button>
+            <button class="tab-btn" onclick="switchTab(event, 'socialTab')">Cotisations Sociales</button>
             <button class="tab-btn" onclick="switchTab(event, 'isTab')">IS & CM</button>
             <button class="tab-btn" onclick="switchTab(event, 'ipfTab')">Profits Fonciers</button>
             <button class="tab-btn" onclick="switchTab(event, 'foncierTab')">Revenus Fonciers</button>
@@ -263,6 +264,42 @@
                     <div class="result-item"><span>IR Brut Annuel :</span> <span id="resIrBrut">0 DH</span></div>
                     <div class="result-item"><span>Déduction Charges :</span> <span id="resCharges">0 DH</span></div>
                     <div class="result-item total"><span>IR Net Mensuel :</span> <span id="resIrMensuel">0 DH</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ONGLET COTISATIONS SOCIALES (CNSS, AMO, CNOPS) -->
+        <div id="socialTab" class="tab-content">
+            <div class="card">
+                <h2>Simulateur des Cotisations Sociales (CNSS, AMO & CNOPS)</h2>
+                <div class="form-group">
+                    <label>Régime d'Affiliation</label>
+                    <select id="regimeSocial" onchange="toggleRegimeSocial()">
+                        <option value="prive">Secteur Privé (CNSS & AMO)</option>
+                        <option value="public">Secteur Public (CNOPS)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Salaire / Traitement Brut Mensuel (DH)</label>
+                    <input type="number" id="salaireBrutGlobal" value="10000">
+                </div>
+                <button class="calc-btn" onclick="calculerSocial()">Calculer les Charges Sociales</button>
+
+                <div class="result-box" id="socialResult" style="display:none;">
+                    <!-- Bloc Privé -->
+                    <div id="blocPrive">
+                        <div class="result-item"><span>CNSS Salarial (4.48% plafonné) :</span> <span id="resCnssSal">0 DH</span></div>
+                        <div class="result-item"><span>AMO Salarial Privé (2.26%) :</span> <span id="resAmoSal">0 DH</span></div>
+                        <div class="result-item"><span>Total Retenues Salariales :</span> <span id="resTotalSal">0 DH</span></div>
+                        <div class="result-item"><span>CNSS Patronal (~21.05%) :</span> <span id="resCnssPat">0 DH</span></div>
+                        <div class="result-item"><span>AMO Patronal Privé (4.11%) :</span> <span id="resAmoPat">0 DH</span></div>
+                    </div>
+                    <!-- Bloc Public -->
+                    <div id="blocPublic" style="display:none;">
+                        <div class="result-item"><span>Cotisation CNOPS Adhérent :</span> <span id="resCnopsAdherent">0 DH</span></div>
+                        <div class="result-item"><span>Cotisation CNOPS Employeur :</span> <span id="resCnopsEmployeur">0 DH</span></div>
+                    </div>
+                    <div class="result-item total"><span>Total Global Pris en Compte :</span> <span id="resTotalGlobalSocial">0 DH</span></div>
                 </div>
             </div>
         </div>
@@ -298,7 +335,7 @@
                     <input type="number" id="prixCession" value="1000000">
                 </div>
                 <div class="form-group">
-                    <label>Prix d'Acquisition Majoré (Achat + frais + travaux en DH)</label>
+                    <label>Prix d'Acquisition Majoré (DH)</label>
                     <input type="number" id="prixAcquisition" value="600000">
                 </div>
                 <button class="calc-btn" onclick="calculerIPF()">Calculer l'IPF</button>
@@ -306,7 +343,7 @@
                 <div class="result-box" id="ipfResult" style="display:none;">
                     <div class="result-item"><span>Profit Brut Réalisé :</span> <span id="resProfitBrut">0 DH</span></div>
                     <div class="result-item"><span>IPF (20%) :</span> <span id="resIPFCalc">0 DH</span></div>
-                    <div class="result-item"><span>Cotisation Minimale (3% cession) :</span> <span id="resIPFMin">0 DH</span></div>
+                    <div class="result-item"><span>Cotisation Minimale (3%) :</span> <span id="resIPFMin">0 DH</span></div>
                     <div class="result-item total"><span>Impôt Exigible :</span> <span id="resIPFDur">0 DH</span></div>
                 </div>
             </div>
@@ -317,13 +354,13 @@
             <div class="card">
                 <h2>Impôt sur les Revenus Fonciers (Location)</h2>
                 <div class="form-group">
-                    <label>Montant Brut des Loyers Encaissés (Annuel en DH)</label>
+                    <label>Montant Brut des Loyers (Annuel en DH)</label>
                     <input type="number" id="loyerBrut" value="60000">
                 </div>
                 <button class="calc-btn" onclick="calculerFoncier()">Calculer l'IR Foncier</button>
 
                 <div class="result-box" id="foncierResult" style="display:none;">
-                    <div class="result-item"><span>Abattement forfaitaire (40%) :</span> <span id="resAbattement">0 DH</span></div>
+                    <div class="result-item"><span>Abattement (40%) :</span> <span id="resAbattement">0 DH</span></div>
                     <div class="result-item"><span>Revenu Net Imposable :</span> <span id="resNetFoncier">0 DH</span></div>
                     <div class="result-item total"><span>IR Foncier Dû :</span> <span id="resIrFoncier">0 DH</span></div>
                 </div>
@@ -335,29 +372,29 @@
             <div class="card">
                 <h2>Simulateur des Taxes Locales (TP & TSC)</h2>
                 <div class="form-group">
-                    <label>Valeur Locative Annuelle du Local / Matériel (DH)</label>
+                    <label>Valeur Locative Annuelle (DH)</label>
                     <input type="number" id="valeurLocative" value="50000">
                 </div>
                 <div class="form-group">
                     <label>Taux de Taxe Professionnelle (TP)</label>
                     <select id="tauxTP">
-                        <option value="0.10">10% (Classe 3)</option>
-                        <option value="20">20% (Classe 2 - Taux standard)</option>
-                        <option value="0.30">30% (Classe 1)</option>
+                        <option value="0.10">10%</option>
+                        <option value="0.20" selected>20% (Standard)</option>
+                        <option value="0.30">30%</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Taux Taxe de Services Communaux (TSC / Édilité)</label>
+                    <label>Taux de Services Communaux (TSC)</label>
                     <select id="tauxTSC">
-                        <option value="0.10">10% (Zone Urbaine)</option>
-                        <option value="0.065">6.5% (Zone Périphérique)</option>
+                        <option value="0.10" selected>10% (Urbain)</option>
+                        <option value="0.065">6.5% (Périphérique)</option>
                     </select>
                 </div>
                 <button class="calc-btn" onclick="calculerTaxesLocales()">Calculer les Taxes</button>
 
                 <div class="result-box" id="taxesResult" style="display:none;">
-                    <div class="result-item"><span>Taxe Professionnelle (TP) :</span> <span id="resTP">0 DH</span></div>
-                    <div class="result-item"><span>Taxe de Services Communaux (TSC) :</span> <span id="resTSC">0 DH</span></div>
+                    <div class="result-item"><span>Taxe Professionnelle :</span> <span id="resTP">0 DH</span></div>
+                    <div class="result-item"><span>Taxe de Services Communaux :</span> <span id="resTSC">0 DH</span></div>
                     <div class="result-item total"><span>Total Taxes Locales :</span> <span id="resTotalTaxes">0 DH</span></div>
                 </div>
             </div>
@@ -374,10 +411,10 @@
                 <div class="form-group">
                     <label>Taux de TVA</label>
                     <select id="tauxTVA">
-                        <option value="20">20% (Taux normal)</option>
-                        <option value="14">14% (Transport / Énergie)</option>
-                        <option value="10">10% (Restauration / Tourisme)</option>
-                        <option value="7">7% (Produits de base)</option>
+                        <option value="20">20% (Normal)</option>
+                        <option value="14">14%</option>
+                        <option value="10">10%</option>
+                        <option value="7">7%</option>
                     </select>
                 </div>
                 <button class="calc-btn" onclick="calculerTVA()">Calculer TVA</button>
@@ -390,43 +427,38 @@
         </div>
     </div>
 
-    <!-- VUE 2 : GUIDE & PRINCIPES FISCAUX -->
+    <!-- VUE 2 : GUIDE & PRINCIPES FISCAUX ET SOCIAUX -->
     <div id="guideView" class="section-view">
         <div class="card">
-            <h2>Guide des Principes Fiscaux & Taxes au Maroc</h2>
+            <h2>Guide des Principes Fiscaux & Sociaux au Maroc</h2>
             
             <h3>1. Impôt sur le Revenu (IR)</h3>
             <p><strong>Assiette :</strong> Salaires, profits professionnels, revenus fonciers.</p>
             <p><strong>Principes :</strong> Barème progressif par tranches et déductions familiales.</p>
 
-            <h3>2. Impôt sur les Sociétés (IS) & Cotisation Minimale</h3>
+            <h3>2. Cotisations Sociales (CNSS, AMO & CNOPS)</h3>
+            <p><strong>Assiette :</strong> Salaire brut ou traitement de base.</p>
+            <p><strong>Principes :</strong> Couverture médicale et prestations sociales. La CNSS/AMO concerne le secteur privé, tandis que la CNOPS couvre les fonctionnaires et agents du secteur public.</p>
+
+            <h3>3. Impôt sur les Sociétés (IS) & Cotisation Minimale</h3>
             <p><strong>Assiette :</strong> Bénéfices nets des personnes morales.</p>
-            <p><strong>Principes :</strong> Taux proportionnels/progressifs et plancher de sécurité via la Cotisation Minimale sur le CA.</p>
 
-            <h3>3. Impôt sur les Profits Fonciers (IPF)</h3>
-            <p><strong>Assiette :</strong> Plus-values de cession immobilière.</p>
-            <p><strong>Principes :</strong> Différence entre prix de cession net et prix d'acquisition majoré (taux 20% ou min 3%).</p>
+            <h3>4. Impôt sur les Profits Fonciers (IPF)</h3>
+            <p><strong>Assiette :</strong> Plus-values de cession immobilière (taux 20% ou min 3%).</p>
 
-            <h3>4. Revenus Fonciers (Location)</h3>
-            <p><strong>Assiette :</strong> Loyers bruts perçus.</p>
-            <p><strong>Principes :</strong> Abattement forfaitaire libératoire de 40% sous conditions.</p>
+            <h3>5. Revenus Fonciers (Location)</h3>
+            <p><strong>Assiette :</strong> Loyers bruts perçus (abattement forfaitaire de 40%).</p>
 
-            <h3>5. Taxe sur la Valeur Ajoutée (TVA)</h3>
-            <p><strong>Assiette :</strong> Chiffre d'affaires taxable.</p>
-            <p><strong>Principes :</strong> Récupération sur les achats (déductibilité) et reversement de la différence.</p>
+            <h3>6. Taxe sur la Valeur Ajoutée (TVA)</h3>
+            <p><strong>Assiette :</strong> Chiffre d'affaires taxable (récupération sur achats).</p>
 
-            <h3>6. Taxe Professionnelle (TP) [Taxes Locales]</h3>
-            <p><strong>Assiette :</strong> Valeur locative des immobilisations professionnelles.</p>
-            <p><strong>Principes :</strong> Due par toute personne exerçant une profession, industrie ou commerce au Maroc (barème selon la classe).</p>
-
-            <h3>7. Taxe de Services Communaux (TSC / Édilité) [Taxes Locales]</h3>
-            <p><strong>Assiette :</strong> Immeubles bâtis et constructions.</p>
-            <p><strong>Principes :</strong> Assise sur la valeur locative (10% en zone urbaine, 6.5% en zone périphérique) pour financer les services communaux.</p>
+            <h3>7. Taxes Locales (Taxe Professionnelle & TSC)</h3>
+            <p><strong>Assiette :</strong> Valeur locative des biens professionnels et bâtis.</p>
         </div>
     </div>
 
     <div class="legal-notice">
-        Conforme DGI - Application de simulation fiscale marocaine hébergeable sur GitHub.
+        Conforme DGI, CNSS & CNOPS - Application de simulation marocaine pour GitHub Pages / APK.
     </div>
 </div>
 
@@ -436,7 +468,6 @@
         for (let v of views) v.classList.remove("active");
         let navBtns = document.getElementsByClassName("main-nav-btn");
         for (let b of navBtns) b.classList.remove("active");
-
         document.getElementById(viewId).classList.add("active");
         evt.currentTarget.classList.add("active");
     }
@@ -448,6 +479,17 @@
         for (let b of buttons) b.classList.remove("active");
         document.getElementById(tabName).classList.add("active");
         evt.currentTarget.classList.add("active");
+    }
+
+    function toggleRegimeSocial() {
+        let regime = document.getElementById('regimeSocial').value;
+        if (regime === 'prive') {
+            document.getElementById('blocPrive').style.display = 'block';
+            document.getElementById('blocPublic').style.display = 'none';
+        } else {
+            document.getElementById('blocPrive').style.display = 'none';
+            document.getElementById('blocPublic').style.display = 'block';
+        }
     }
 
     function calculerIR() {
@@ -471,6 +513,42 @@
         document.getElementById('resCharges').innerText = "- " + reductionCharges.toLocaleString() + " DH";
         document.getElementById('resIrMensuel').innerText = irNetMensuel.toFixed(2) + " DH";
         document.getElementById('irResult').style.display = "block";
+    }
+
+    function calculerSocial() {
+        let regime = document.getElementById('regimeSocial').value;
+        let brut = parseFloat(document.getElementById('salaireBrutGlobal').value) || 0;
+        let totalGlobal = 0;
+
+        if (regime === 'prive') {
+            let baseCnssPlafonnee = Math.min(brut, 6000);
+            let cnssSal = baseCnssPlafonnee * 0.0448;
+            let amoSal = brut * 0.0226;
+            let totalSal = cnssSal + amoSal;
+
+            let cnssPat = baseCnssPlafonnee * 0.2105;
+            let amoPat = brut * 0.0411;
+            let totalPat = cnssPat + amoPat;
+
+            totalGlobal = totalSal + totalPat;
+
+            document.getElementById('resCnssSal').innerText = cnssSal.toFixed(2) + " DH";
+            document.getElementById('resAmoSal').innerText = amoSal.toFixed(2) + " DH";
+            document.getElementById('resTotalSal').innerText = totalSal.toFixed(2) + " DH";
+            document.getElementById('resCnssPat').innerText = cnssPat.toFixed(2) + " DH";
+            document.getElementById('resAmoPat').innerText = amoPat.toFixed(2) + " DH";
+        } else {
+            // CNOPS (Secteur Public - estimation standard de la cotisation mutuelle/CNOPS part adhérent et employeur)
+            let cnopsAdherent = brut * 0.05; // Exemple indicatif part adhérent
+            let cnopsEmployeur = brut * 0.05; // Exemple indicatif part employeur
+            totalGlobal = cnopsAdherent + cnopsEmployeur;
+
+            document.getElementById('resCnopsAdherent').innerText = cnopsAdherent.toFixed(2) + " DH";
+            document.getElementById('resCnopsEmployeur').innerText = cnopsEmployeur.toFixed(2) + " DH";
+        }
+
+        document.getElementById('resTotalGlobalSocial').innerText = totalGlobal.toFixed(2) + " DH";
+        document.getElementById('socialResult').style.display = "block";
     }
 
     function calculerISetCM() {
